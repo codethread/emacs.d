@@ -1,5 +1,15 @@
-.private
-.config/exercism
-.config/yarn
+# Ignore everything
+*
 
-.config/kitty/kitty.conf.bak 
+!/.gitignore
+!.github/**
+
+!scripts/**
+!elisp/**
+!snippets/**
+!abbrev_defs
+!early-init.el
+!init.el
+
+!*/
+
