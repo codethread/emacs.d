@@ -2,7 +2,12 @@
 ;;; Commentary:
 ;;; Code:
 
-(global-set-key (kbd "C-x C-v") (lambda () (interactive) (find-file "~/.emacs.d/elisp/init.el")))
+(defun my/open-init-file ()
+  "Open my init.el buffer."
+  (interactive)
+  (find-file "~/.emacs.d/init.el"))
+
+(global-set-key (kbd "C-x C-v") #'my/open-init-file)
 (add-to-list 'load-path "~/.emacs.d/scripts")
 (require '+constants)
 
@@ -64,11 +69,6 @@
     "Open the *Messages* buffer."
     (interactive)
     (switch-to-buffer "*Messages*"))
-
-  (defun my/open-init-file ()
-    "Open my init.el buffer."
-    (interactive)
-    (find-file "~/.emacs.d/elisp/init.el"))
 
   (general-create-definer my-leader-def
     :prefix "SPC"
