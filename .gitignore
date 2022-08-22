@@ -1,15 +1,9 @@
-# Ignore everything
-*
-
-!/.gitignore
-!.github/**
-
-!scripts/**
-!elisp/**
-!snippets/**
-!abbrev_defs
-!early-init.el
-!init.el
-
-!*/
-
+.cache
+eln-cache
+elpa
+straight
+undo
+custom.el
+org-roam.db
+projects
+projectile*
