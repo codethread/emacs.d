@@ -2,8 +2,8 @@
 ;;; Commentary:
 ;;; Code:
 
-(global-set-key (kbd "C-x C-v") (lambda () (interactive) (find-file (concat user-emacs-directory "/init.el"))))
-(add-to-list 'load-path "~/PersonalConfigs/emacs/scripts")
+(global-set-key (kbd "C-x C-v") (lambda () (interactive) (find-file "~/.emacs.d/elisp/init.el")))
+(add-to-list 'load-path "~/.emacs.d/scripts")
 (require '+constants)
 
 
@@ -68,7 +68,7 @@
   (defun my/open-init-file ()
     "Open my init.el buffer."
     (interactive)
-    (find-file (concat user-emacs-directory "/init.el")))
+    (find-file "~/.emacs.d/elisp/init.el"))
 
   (general-create-definer my-leader-def
     :prefix "SPC"
@@ -119,7 +119,7 @@
     "p" '(:ignore t :wk "Projectile")))
 
 (use-package +utils
-  :straight (+utils :local-repo "~/PersonalConfigs/emacs/elisp/+utils")
+  :straight (+utils :local-repo "~/.emacs.d/elisp/+utils")
   :general
   (general-def :keymaps 'override
     "C-s-<f8>" '+utils-close-notifications-mac))
@@ -252,7 +252,7 @@
   :demand
   :straight nil
   :custom
-  (auto-save-list-file-prefix (concat user-temporary-file-directory ".auto-saves-"))
+  (auto-save-list-file-prefix "~/.emacs.d/elisp.auto-saves-")
   (auto-save-file-name-transforms `((".*" ,user-temporary-file-directory t)))
   (inhibit-startup-screen t)
   (initial-buffer-choice (lambda () (switch-to-buffer "*Messages*"))))
@@ -1938,7 +1938,7 @@ _s_kip
   (defun my|eslint-fix-file ()
     "Run eslint --fix on current file."
     (interactive)
-    (message (concat "eslint --fixing " (buffer-file-name) " using"))
+    (message "~/.emacs.d/elisp using")
     (save-buffer)
     (shell-command
      (concat "cd " (projectile-project-root) " && node_modules/eslint/bin/eslint.js"
@@ -1984,7 +1984,7 @@ _s_kip
 
   :config
   (setq ispell-program-name
-	(concat (string-trim (shell-command-to-string "brew --prefix")) "/bin/aspell"))
+	"~/.emacs.d/elisp/bin/aspell")
 
   (defun my/my-save-word ()
     (interactive)
@@ -2017,7 +2017,7 @@ _s_kip
     (setq line-spacing 0.2)))
 
 (use-package +markdown
-  :straight (my-markdown-helpers :local-repo "~/PersonalConfigs/emacs/elisp/+markdown")
+  :straight (my-markdown-helpers :local-repo "~/.emacs.d/elisp/+markdown")
   ;; :hook (markdown-mode . my/markdown-theme)
   )
 
@@ -2315,13 +2315,13 @@ _s_kip
 
 (use-package +org-alert
   :disabled
-  :straight (org-alert :local-repo "~/PersonalConfigs/emacs/elisp/org-alert")
+  :straight (org-alert :local-repo "~/.emacs.d/elisp/org-alert")
   :defer 30
   :config
   (org-alert-enable))
 
 (use-package +org
-  :straight (my-org-helpers :local-repo "~/PersonalConfigs/emacs/elisp/+org")
+  :straight (my-org-helpers :local-repo "~/.emacs.d/elisp/+org")
   :after (:any org org-roam)
   :commands
   (my/open-my-notes-file my/open-work-notes-file)
