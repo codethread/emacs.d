@@ -7,3 +7,10 @@ custom.el
 org-roam.db
 projects
 projectile*
+bookmarks
+emojis/
+forge-database.sqlite
+recentf
+smex-items
+transient/
+url/
