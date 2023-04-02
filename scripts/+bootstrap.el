@@ -10,7 +10,8 @@
 
 (require '+constants)
 
-(setq straight-check-for-modifications nil) ; speeds up startup, but requires manual recompile, see 'emacs straight' notes
+(setq straight-check-for-modifications nil)
+					; speeds up startup, but requires manual recompile, see 'emacs straight' notes
 
 (defvar bootstrap-version)
 (let ((bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))

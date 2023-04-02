@@ -10,6 +10,7 @@
 (global-set-key (kbd "C-x C-v") #'my/open-init-file)
 (add-to-list 'load-path "~/.emacs.d/scripts")
 (require '+constants)
+(setq +is-work (equal (string-trim (shell-command-to-string "whoami")) "adam.hall"))
 
 
 ;;; Setup Straight package manager
@@ -128,10 +129,11 @@
 ;;; Builtin configurations
 
 (use-package desktop
+  :disabled
   :demand
   :straight nil
   :custom
-  (desktop-restore-eager 15) 		; only load 15 buffers on start, do the rest when idle
+  (desktop-restore-eager 15) ; only load 15 buffers on start, do the rest when idle
   :config
   (desktop-save-mode 1))
 
@@ -143,9 +145,9 @@
   (prog-mode . (lambda () (setq line-spacing 0.1)))
   :init
   ;; font strings "FiraCode Nerd Font"
-  (set-face-attribute 'default nil :font "IBM Plex Mono" :height (+utils-when-monitor-size :small 130 :large 140))
-  (set-face-attribute 'variable-pitch nil :font "IBM Plex Serif")
-  (set-face-attribute 'fixed-pitch nil :font "IBM Plex Mono")
+  (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height (+utils-when-monitor-size :small 130 :large 140))
+  (set-face-attribute 'variable-pitch nil :font "FiraCode Nerd Font")
+  (set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font")
   :config
   (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -167,6 +169,7 @@
 	kill-buffer-query-functions nil
 	delete-by-moving-to-trash t
 	native-comp-async-report-warnings-errors nil
+	line-spacing 4
 	 )
 
   ;; (global-visual-line-mode -1)
@@ -184,12 +187,12 @@
 
   ;; (custom-set-faces
   ;;  ;; `(default ((t (:font "FiraCode Nerd Font" :height 160))))
-  ;;  `(default ((t (:family "IBM Plex Mono" :height 130)))) ; come up with some monitor specific setups
+  ;;  `(default ((t (:family "FiraCode Nerd Font" :height 130)))) ; come up with some monitor specific setups
   ;;  ;; `(default ((t (:font "FiraCode Nerd Font")))) ; come up with some monitor specific setups
   ;;  ;; :height should be a float to adjust the relative size to the normal default font
   ;;  `(fixed-pitch ((t (:family "IBM Plex Sans" :height 130))))
   ;;  ;; `(org-modern-symbol ((t (:font "Hack Nerd Font" :height 130))))
-  ;;  `(variable-pitch ((t (:family "IBM Plex Serif" :height 130))))
+  ;;  `(variable-pitch ((t (:family "FiraCode Nerd Font" :height 130))))
 
   ;;  `(font-lock-function-name-face ((t (:slant italic))))
   ;;  `(font-lock-variable-name-face ((t (:weight semi-bold))))
@@ -296,7 +299,11 @@
 
 (use-package dired
   :straight nil
-  :custom (dired-listing-switches "-Algho --group-directories-first")
+  :ensure-system-package coreutils 	; needed for gnu-ls instead of macos default
+  :custom
+  (insert-directory-program "gls")
+  (dired-use-ls-dired t)
+  (dired-listing-switches "-Algho --group-directories-first")
 
   :general
   (my-leader-def
@@ -418,6 +425,7 @@
   ([remap describe-key] . helpful-key))
 
 (use-package rainbow-delimiters
+  :disabled
   :hook
   ((web-mode typescript-mode scala-mode java-mode) . rainbow-delimiters-mode))
 
@@ -806,23 +814,24 @@
    "tabs"
    ("l" elscreen-next "next")
    ("h" elscreen-previous "previous")
-   ("x" elscreen-kill "close window")
+   ("x" elscreen-kll "close window")
    ("j" nil "quit" :color blue)
    ("n" elscreen-create "new" :color blue))
   :config
   (elscreen-start)
-  ;; (custom-set-faces
-  ;;  `(elscreen-tab-background-face ((t (:background ,(doom-color 'bg) :height 1.5))))
-  ;;  `(elscreen-tab-current-screen-face ((t (:background ,(doom-color 'bg) :foreground ,(doom-color 'yellow) :underline (:color ,(doom-color 'yellow))))))
-  ;;  `(elscreen-tab-other-screen-face ((t (:background ,(doom-color 'bg) :foreground ,(doom-color 'blue))))))
+  (custom-set-faces
+   `(elscreen-tab-background-face ((t (:background ,(doom-color 'bg) :height 1.5))))
+   `(elscreen-tab-current-screen-face ((t (:background ,(doom-color 'bg) :foreground ,(doom-color 'yellow) :underline (:color ,(doom-color 'yellow))))))
+   `(elscreen-tab-other-screen-face ((t (:background ,(doom-color 'bg) :foreground ,(doom-color 'blue))))))
 
-  (let ((bg (modus-themes-color 'bg-main))
-	(yellow (modus-themes-color 'yellow))
-	(blue (modus-themes-color 'blue)))
-    (custom-set-faces
-     `(elscreen-tab-background-face ((t (:background ,bg :height 1.5))))
-     `(elscreen-tab-current-screen-face ((t (:background ,bg :foreground ,yellow :underline (:color ,yellow)))))
-     `(elscreen-tab-other-screen-face ((t (:background ,bg :foreground ,blue)))))))
+  ;; (let ((bg (modus-themes-color 'bg-main))
+  ;; 	(yellow (modus-themes-color 'yellow))
+  ;; 	(blue (modus-themes-color 'blue)))
+  ;;   (custom-set-faces
+  ;;    `(elscreen-tab-background-face ((t (:background ,bg :height 1.5))))
+  ;;    `(elscreen-tab-current-screen-face ((t (:background ,bg :foreground ,yellow :underline (:color ,yellow)))))
+  ;;    `(elscreen-tab-other-screen-face ((t (:background ,bg :foreground ,blue))))))
+  )
 
 (use-package evil-mc
   :general
@@ -885,14 +894,14 @@ _s_kip
 ;;; Themes and Fonts
 
 (use-package modus-themes
-  ;; :disabled
+  :disabled
   ;; docs are hidden away a bit https://protesilaos.com/emacs/modus-themes#h:51ba3547-b8c8-40d6-ba5a-4586477fd4ae
   :init
-  (modus-themes-load-themes)
+  ;; (modus-themes-load-themes)
   :commands (+my-apply-theme)
-  :hook ((after-init . (lambda ()
-			 (+my-apply-theme)
-			 (solaire-global-mode))))
+  ;; :hook ((after-init . (lambda ()
+  ;; 			 (+my-apply-theme)
+  ;; 			 (solaire-global-mode))))
   :custom
   (modus-themes-italic-constructs t)
   (modus-themes-bold-constructs t)
@@ -917,8 +926,9 @@ _s_kip
 					   (fg-main . "#1b1b1b")))
   (modus-themes-vivendi-color-overrides '((bg-main . "#24292f")))
   :config
-  (set-face-attribute 'default nil :font "IBM Plex Mono")
-  (set-face-attribute 'variable-pitch nil :font "IBM Plex Serif")
+  (load-theme 'modus-operandi)
+  (set-face-attribute 'default nil :font "FiraCode Nerd Font")
+  (set-face-attribute 'variable-pitch nil :font "FiraCode Nerd Font")
   (modus-themes-load-operandi)
 
   (defun +my-apply-theme ()
@@ -933,7 +943,7 @@ _s_kip
   (setq solaire-mode-remap-modeline nil))
 
 (use-package doom-themes
-  :disabled
+  ;; :disabled
   :hook (after-init . my/load-doom-theme)
   :config
   (defun my/load-doom-theme ()
@@ -947,6 +957,7 @@ _s_kip
      `(font-lock-function-name-face ((t (:slant italic))))
      `(font-lock-variable-name-face ((t (:weight semi-bold))))
      `(font-lock-comment-face ((t (:slant italic)))))))
+
 
 (use-package all-the-icons)
 
@@ -992,8 +1003,11 @@ _s_kip
   ((typescript-mode rustic-mode) . (lambda () (tree-sitter-mode) (tree-sitter-hl-mode)))
   :commands (my/tree-sitter-hl)
   :config
-  (defface my/unmissable-face '((t (:inherit 'default :foreground "red" :weight bold :underline t))) "Face for things I do not want to miss!")
-  (defface my/obvious-face '((t (:inherit 'mode-line-emphasis))) "Face for things I want to see clearly like return statements")
+  (defface my/unmissable-face
+    '((t (:inherit 'default :foreground "red" :weight bold :underline t))) "Face for things I do not want to miss!")
+  ;; (defface my/obvious-face '((t (:inherit 'mode-line-emphasis))) "Face for things I want to see clearly like return statements")
+  (defface my/obvious-face
+    '((t (:inherit 'default :weight bold :foreground "#D08770"))) "Face for things I want to see clearly like return statements")
   ;; register "return" as a new pattern under a new name
   (dolist (lang '(javascript typescript tsx))
     (tree-sitter-hl-add-patterns lang
@@ -1006,7 +1020,8 @@ _s_kip
 		(lambda (capture-name)
 		  (pcase capture-name
 		    ("keyword.return" 'my/obvious-face)
-		    ("keyword.bang" 'my/unmissable-face))))
+		    ("keyword.bang" 'my/unmissable-face)
+		    ("tree-sitter-hl-face:attribute" 'my/obvious-face))))
 
 
   (defun my/tree-sitter-hl ()
@@ -1035,24 +1050,24 @@ _s_kip
 ;; 				:files ("tree-sitter-indent.el"))
 ;;   :after tree-sitter)
 
-(use-package evil-textobj-tree-sitter
-  :disabled   ; some fun stuff in here, will look into this more later
-  :after tree-sitter
-  :straight (evil-textobj-tree-sitter :type git
-				      :host github
-				      :repo "meain/evil-textobj-tree-sitter"
-				      :files (:defaults "queries"))
-  :config
-  ;; bind `function.outer`(entire function block) to `f` for use in things like `vaf`, `yaf`
-  (define-key evil-outer-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.outer"))
-  ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
-  (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))
+;; (use-package evil-textobj-tree-sitter
+;;   :disabled   ; some fun stuff in here, will look into this more later
+;;   :after tree-sitter
+;;   :straight (evil-textobj-tree-sitter :type git
+;; 				      :host github
+;; 				      :repo "meain/evil-textobj-tree-sitter"
+;; 				      :files (:defaults "queries"))
+;;   :config
+;;   ;; bind `function.outer`(entire function block) to `f` for use in things like `vaf`, `yaf`
+;;   (define-key evil-outer-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.outer"))
+;;   ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
+;;   (define-key evil-inner-text-objects-map "f" (evil-textobj-tree-sitter-get-textobj "function.inner"))
 
-  (define-key evil-outer-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj "param.outer"
-										    '((typescript-mode . [(required_parameter) @param.outer]))))
-  ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
-  (define-key evil-inner-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj "param.inner"
-										    '((typescript-mode . [(required_parameter) @param.inner])))))
+;;   (define-key evil-outer-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj "param.outer"
+;; 										    '((typescript-mode . [(required_parameter) @param.outer]))))
+;;   ;; bind `function.inner`(function block without name and args) to `f` for use in things like `vif`, `yif`
+;;   (define-key evil-inner-text-objects-map "a" (evil-textobj-tree-sitter-get-textobj "param.inner"
+;; 										    '((typescript-mode . [(required_parameter) @param.inner])))))
 
 
 ;;; Projects / Navigation
@@ -1066,7 +1081,10 @@ _s_kip
 					     ".git" ".hg" ".fslckout" "_FOSSIL_" ".bzr"
 					     "_darcs" ".tox" ".svn" ".stack-work"
 					     ".ccls-cache" ".cache" ".clangd"
-					     ".yarn/cache"))
+					     ".yarn/cache"
+					     ;; temp
+					     "android" "e2e" "e2e-web" "ios"
+					     ))
   :init
   (if (file-directory-p "~/sky")
       (setq projectile-project-search-path '("~/dev" "~/sky"))
@@ -1552,6 +1570,7 @@ _s_kip
 ;;;; Javascript / Typescript / Web
 
 (use-package add-node-modules-path
+  :disabled
   :hook
   (web-mode)
   (typescript-tsx-mode)
@@ -1609,8 +1628,11 @@ _s_kip
 ;;     (flycheck-add-next-checker 'lsp 'javascript-eslint)))
 
 (use-package coverlay)
+(use-package origami)
+(use-package css-in-js-mode :straight '(css-in-js-mode :type git :host github :repo "orzechowskid/tree-sitter-css-in-js"))
+
 (use-package tsx-mode
-  :straight (tsx-mode :host github :repo "orzechowskid/tsx-mode.el")
+  :straight (tsx-mode :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs28")
   :mode "\\.tsx\\'"
   :mode "\\.jsx\\'"
   :custom (tsx-mode-tsx-auto-tags t)
@@ -1627,7 +1649,9 @@ _s_kip
     ;; (flycheck-add-mode 'javascript-eslint 'tsx-mode)
     ;; (setq flycheck-checker 'javascript-eslint)
     ;; (flycheck-add-next-checker 'lsp 'javascript-eslint)
-    ))
+    )
+  :custom-face
+  (tree-sitter-hl-face:attribute ((t (:inherit warning)))))
 
 (use-package web-mode
   ;; still need web-mode stuff as typescript-tsx-mode is actually derived from it
@@ -1726,7 +1750,8 @@ _s_kip
 (use-package highlight-defined
   :hook (emacs-lisp-mode . highlight-defined-mode)
   :config
-  (let ((normal (modus-themes-color 'blue-alt-faint)))
+  (let (;; (normal (modus-themes-color 'blue-alt-faint))
+	(normal (doom-color 'teal)))
     (custom-set-faces
      `(highlight-defined-function-name-face ((t (:foreground ,normal))))
      `(highlight-defined-builtin-function-name-face ((t (:foreground ,normal))))
@@ -2049,8 +2074,12 @@ _s_kip
 
 (use-package org
   :init
-  (setq org-directory "~/Dropbox/roam")
-  (setq org-default-notes-file (expand-file-name "~/Dropbox/roam/20210614152805-dump.org"))
+  (setq org-directory (if +is-work
+			  "~/gdrive/notes"
+			"~/Dropbox/roam"))
+  (setq org-default-notes-file (if +is-work
+				   (expand-file-name "~/gdrive/notes/20230316105026-dump.org")
+				 (expand-file-name "~/Dropbox/roam/20210614152805-dump.org")))
   :hook
   (org-mode . my/org-mode-settings)
 
@@ -2085,8 +2114,9 @@ _s_kip
 			("elisp" . emacs-lisp)))
   ;; adding roam files does have the consequence of loading all buffers into memory, which could get out of hand
 
-  (org-agenda-files (-non-nil (-list "~/Dropbox/roam"
-				     "~/Dropbox/org-me-notes/notes.org"
+  (org-agenda-files (-non-nil (-list (when (file-directory-p "~/Dropbox") "~/Dropbox/roam")
+				     (when (file-directory-p "~/Dropbox") "~/Dropbox/org-me-notes.org")
+				     (when (file-directory-p "~/gdrive/notes") "~/gdrive/notes")
 				     (when (file-directory-p "~/OneDrive - Sky")
 				       (expand-file-name "~/OneDrive - Sky/dev/org-sky-notes/work.org")))))
   ;; Not sure I fully understand what I've configured here but intention was to remove the filenames from agenda view
@@ -2122,6 +2152,8 @@ _s_kip
      ("a" "Appointment" entry (file+headline org-default-notes-file "Capture:Collect")
       "* %? %^G \n  %^t")
      ("l" "Link" entry (file+headline org-default-notes-file "Capture:Tasks")
+      "* TODO LINK %?\n  %u\n  %a")
+     ("c" "Component" entry (file+headline org-default-notes-file "Capture:Component")
       "* TODO LINK %?\n  %u\n  %a")
      ("n" "Note" entry (file+headline org-default-notes-file "Capture:Notes")
       "* %? %^G\n%U" :empty-lines 1)
@@ -2229,8 +2261,8 @@ _s_kip
   (org-modern-table nil)
   :config
   ;; (custom-set-faces `(org-table ((t (:inherit fixed-pitch)))))
-  (set-face-attribute 'org-table nil :font "IBM Plex Mono")
-  (set-face-attribute 'org-block nil :font "IBM Plex Mono" :extend t)
+  (set-face-attribute 'org-table nil :font "FiraCode Nerd Font")
+  (set-face-attribute 'org-block nil :font "FiraCode Nerd Font" :extend t)
   (set-face-attribute 'org-modern-symbol nil :font "Hack Nerd Font"))
 
 (use-package org-bullets
@@ -2241,10 +2273,11 @@ _s_kip
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-(setq +org-roam-dir "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/roam")
+(setq +org-roam-dir (if +is-work
+			"~/gdrive/notes"
+		      "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/roam"))
 
 (use-package org-roam
-    ;; :if (file-directory-p "~/Dropbox/roam")
   :if (file-directory-p +org-roam-dir)
   :init
   (setq org-roam-v2-ack t)
@@ -2254,15 +2287,20 @@ _s_kip
   (org-roam-db-update-method 'idle-timer)
   (org-roam-encrypt-files t)
   (org-roam-completion-everywhere t) 	; allow completion for inserting node links
+
   (org-roam-capture-templates
-   '(("d" "default" plain
-      "%?"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n\n")
-      :unnarrowed t)
-     ("s" "secure" plain
-      "%?"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org.gpg" "#+title: ${title}\n\n")
-      :unnarrowed t)))
+	'(("d" "default" plain "%?" :target
+	  (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+	  :unnarrowed t)))
+  ;; (org-roam-capture-templates
+  ;;  '(("d" "default" plain
+  ;;     "%?"
+  ;;     :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n\n")
+  ;;     :unnarrowed t)
+  ;;    ("s" "secure" plain
+  ;;     "%?"
+  ;;     :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org.gpg" "#+title: ${title}\n\n")
+  ;;     :unnarrowed t)))
   :config
   (org-roam-setup)
   :general
@@ -2324,14 +2362,13 @@ _s_kip
   :straight (my-org-helpers :local-repo "~/.emacs.d/elisp/+org")
   :after (:any org org-roam)
   :commands
-  (my/open-my-notes-file my/open-work-notes-file)
+  (+org-open-my-notes-file +org-open-work-notes-file)
   :general
   (my-leader-def
-    "nn" 'my/open-my-notes-file
-    "nN" 'my/open-work-notes-file)
+    "nn" '+org-open-my-notes-file
+    "nN" '+org-open-work-notes-file)
   :config
-  ;; (my/org-theme)
-  )
+  (+org-theme))
 
 ;; reset gc to something sensible for normal operation
 (setq gc-cons-threshold (* 2 1000 1000))

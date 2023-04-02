@@ -3,9 +3,10 @@
 ;;; Code:
 (require 'org)
 
+(print "loaded +org")
 (defvar +org-personal-file "~/Dropbox/org-me-notes/notes.org")
 
-(defvar +org-work-file "~/OneDrive - Sky/dev/org-sky-notes/work.org")
+(defvar +org-work-file "~/gdrive/notes/20230316105531-index.org")
 
 (defvar +org-heading-font "Futura"
   "Font to use for org title, headings and markdown headings.")
