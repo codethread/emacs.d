@@ -3,13 +3,25 @@
 ;;; Code:
 (require 'org)
 
-(print "loaded +org")
-(defvar +org-personal-file "~/Dropbox/org-me-notes/notes.org")
+(defgroup +org nil
+  "My org mode helpers."
+  :group 'files
+  :prefix "+org")
 
-(defvar +org-work-file "~/gdrive/notes/20230316105531-index.org")
+(defcustom +org-personal-file "~/note.org"
+  "My main notes file."
+  :type '(string)
+  :group '+org)
 
-(defvar +org-heading-font "Futura"
-  "Font to use for org title, headings and markdown headings.")
+(defcustom +org-work-file "~/work-note.org"
+  "My work notes file."
+  :type '(string)
+  :group '+org)
+
+(defcustom +org-heading-font "Futura"
+  "Font to use for org title, headings and markdown headings."
+  :type '(string)
+  :group '+org)
 
 ;; seems broken
 (defun +org-toggle-list-checkbox ()

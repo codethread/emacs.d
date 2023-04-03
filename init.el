@@ -2079,7 +2079,7 @@ _s_kip
 			"~/Dropbox/roam"))
   (setq org-default-notes-file (if +is-work
 				   (expand-file-name "~/gdrive/notes/20230316105026-dump.org")
-				 (expand-file-name "~/Dropbox/roam/20210614152805-dump.org")))
+				 (file-truename "~/notes/roam/20210614152805-dump.org")))
   :hook
   (org-mode . my/org-mode-settings)
 
@@ -2275,7 +2275,7 @@ _s_kip
 
 (setq +org-roam-dir (if +is-work
 			"~/gdrive/notes"
-		      "~/Library/Mobile Documents/iCloud~com~appsonthemove~beorg/Documents/roam"))
+		      (file-truename "~/notes/roam")))
 
 (use-package org-roam
   :if (file-directory-p +org-roam-dir)
@@ -2361,6 +2361,9 @@ _s_kip
 (use-package +org
   :straight (my-org-helpers :local-repo "~/.emacs.d/elisp/+org")
   :after (:any org org-roam)
+  :custom
+  (+org-personal-file (file-truename "~/notes/roam/notes.org"))
+  (+org-work-file (file-truename "~/gdrive/notes/20230316105531-index.org"))
   :commands
   (+org-open-my-notes-file +org-open-work-notes-file)
   :general
