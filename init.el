@@ -42,11 +42,11 @@
 
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
-  :disabled
   :demand
   :custom
-  (exec-path-from-shell-arguments '("-l"))
-  (exec-path-from-shell-variables '("PATH" "MANPATH" "SPOTIFY_TOKEN" "SLACK_SKY_EMACS_TOKEN"))
+
+  (exec-path-from-shell-arguments '("--login"))
+  (exec-path-from-shell-variables '("PATH" "MANPATH" "SPOTIFY_TOKEN" "SLACK_SKY_EMACS_TOKEN" "LSP_USE_PLISTS"))
   :config
   (exec-path-from-shell-initialize))
 
@@ -1435,12 +1435,14 @@ _s_kip
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
   :init
+  (setq lsp-use-plists t)
   ;; get from https://github.com/elixir-lsp/elixir-ls/releases
   (add-to-list 'exec-path "~/.tooling/elixir-ls-1.11/")
   :hook
   ((web-mode typescript-mode tsx-mode scala-mode java-mode elixir-mode go-mode scss-mode css-mode svelte-mode) . lsp-deferred)
   (lsp-mode . lsp-enable-which-key-integration)
   :custom
+  
   ;; general
   (lsp-auto-execute-action '())
   (lsp-headerline-breadcrumb-enable nil)
@@ -2008,8 +2010,7 @@ _s_kip
     "EN" 'evil-next-flyspell-error)
 
   :config
-  (setq ispell-program-name
-	"~/.emacs.d/elisp/bin/aspell")
+  ;; (setq ispell-program-name "~/.emacs.d/elisp/bin/aspell")
 
   (defun my/my-save-word ()
     (interactive)
@@ -2042,7 +2043,7 @@ _s_kip
     (setq line-spacing 0.2)))
 
 (use-package +markdown
-  :straight (my-markdown-helpers :local-repo "~/.emacs.d/elisp/+markdown")
+  :straight (+markdown :local-repo "~/.emacs.d/elisp/+markdown")
   ;; :hook (markdown-mode . my/markdown-theme)
   )
 
@@ -2273,9 +2274,7 @@ _s_kip
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-(setq +org-roam-dir (if +is-work
-			"~/gdrive/notes"
-		      (file-truename "~/notes/roam")))
+(setq +org-roam-dir (file-truename "~/notes/roam"))
 
 (use-package org-roam
   :if (file-directory-p +org-roam-dir)
@@ -2359,7 +2358,7 @@ _s_kip
   (org-alert-enable))
 
 (use-package +org
-  :straight (my-org-helpers :local-repo "~/.emacs.d/elisp/+org")
+  :straight (+org :local-repo "~/.emacs.d/elisp/+org")
   :after (:any org org-roam)
   :custom
   (+org-personal-file (file-truename "~/notes/roam/notes.org"))
@@ -2374,6 +2373,6 @@ _s_kip
   (+org-theme))
 
 ;; reset gc to something sensible for normal operation
-(setq gc-cons-threshold (* 2 1000 1000))
+(setq gc-cons-threshold (* 100 1000 1000))
 
 ;;; init.el ends here
